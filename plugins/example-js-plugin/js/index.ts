@@ -2,7 +2,6 @@ import { before } from "@valenced/patcher";
 import { getModules } from "@valenced/modules/finders";
 import { withProps } from "@valenced/modules/finders/filters";
 
-
 function tsundereifyMax(text, settings = {}) {
   const s = {
     intensity: 70,
@@ -14,8 +13,6 @@ function tsundereifyMax(text, settings = {}) {
     emojis: true,
     ...settings,
   };
-
-  if (typeof text !== "string" || text.startsWith("/")) return text;
 
   // Protect URLs and inline code.
   const protectedParts = [];
@@ -521,13 +518,14 @@ export default plugin({
   start({ logger, cleanup }) {
     logger.log("Tsundere Messages loaded 💢");
 
-    // Intercept outgoing messages and transform their text before Discord sends them.
     cleanup(
       getModules(withProps("sendMessage"), (module) => {
         const target =
-          module?.default && typeof module.default.sendMessage === "function"
+          module?.default &&
+          typeof module.default.sendMessage === "function"
             ? module.default
             : module;
+
         if (!target || typeof target.sendMessage !== "function") return;
 
         cleanup(
